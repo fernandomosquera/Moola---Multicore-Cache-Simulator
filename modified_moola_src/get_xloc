@@ -1,0 +1,5 @@
+#
+grep ';' configure.c moola.c reference.c tracegz.c utils.c moola.h > tmp
+grep '}' configure.c moola.c reference.c tracegz.c utils.c moola.h >> tmp
+wc tmp
+rm tmp

@@ -1,0 +1,839 @@
+//  moola.c  (main program of Moola Multicore Cache Simulator)
+//  Copyright (c) 2013 Charles Shelor.
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+//  Contact charles.shelor@gmail.com  or  Krishna.Kavi@unt.edu
+//  Net-Centric Software and Systems I/UCRC.  http://netcentric.unt.edu/content/welcome
+//
+////////////////////////////////////////////////////////////////////////////////
+//
+//  This is the main source file for the Moola multi-core cache simulator from UNT
+//
+//  Cache terminology used in Moola:
+//  Level 1 (L1) cache is closest to the processor and is also the lowest level cache.
+//  Going to a higher cache means a cache closer to memory.
+//  The Last Level Cache (LLC) is the cache closest to memory.
+//
+////////////////////////////////////////////////////////////////////////////////
+//
+//  The following files comprise the Moola application:
+//      moola.c		Main program file (this file) instantiating all data elements, and performing
+//						configuration, initialization, main loop, and program termination
+//		moola.h		Common header file used by all other Moola files with all data structures,
+//						constant definitions, and external data references
+//		config.c	Functions to interpret the command line arguments and read or write the
+//						configuration file as appropriate
+//		initial.c	Functions to initialize the cache structure as requested by the configuration
+//		utils.c		Utility functions used in multiple phases of Moola
+//		statis.c	Functions to output the various statistics of the cache simulation
+//		tracegz.c	Function to read the gzip trace file format
+//
+//  Compile with this command:
+//		clang configure.c reference.c utils.c tracegz.c moola.c -lz -o moola
+
+
+#include <stdio.h>
+#include <stdlib.h>
+//  #include <sys/types.h>  // required for <unistd.h> according to 'man getpid', but runs without it on Mac OS X
+#include <unistd.h>			//	needed for getpid()
+//#include <string.h>
+//#include <assert.h>
+
+#include "moola.h"
+#include <inttypes.h>
+
+////////////////////////////////////////////////////////////////////////////////
+//	static variable declarations global to all files, in alphabetical order
+////////////////////////////////////////////////////////////////////////////////
+
+int64_t		asids[MAX_PIDS];		// ASIDs for use with -unicore
+int32_t		batch_instr_count;		//	number of instructions expected per interleaved batch
+char		*cfg_fil_name;			//	configuration output file name
+int16_t		comb_i_d;				//	combine i-cache d-cache statistics when non-zero
+char		*csv_fil_name;			//	csv output file name
+char            *csv_fil_name2;                  //      csv output file name
+int64_t		data_offs[MAX_PIDS];	//	data address offsets used with -unicore
+int16_t		data_only;				//	flag set when no instructions are traced
+int64_t		flush_rate;				//	flush caches after every flush_rate instructions
+memref		*free_mrs;				//	list of free memref instances
+int16_t		in_filcnt;				//	number of input files to process
+char		*in_fnames[MAX_PIDS];	//	pointer to input file names
+char		*in_format;				//	input file format
+int64_t		instr_offs[MAX_PIDS];	//	instruction address offsets used with -unicore, -unicore_sh
+cache		l1d[MAX_PIDS];			//	array of Level 1 data caches (1 for each processor)
+cache_cfg	l1d_cfg;				//	configuration values for Level 1 data cache
+cache		l1i[MAX_PIDS];			//	array of Level 1 instr caches (1 for each processor)
+cache_cfg	l1i_cfg;				//	configuration values for Level 1 instruction cache
+cache		l2[MAX_PIDS];			//	array of Level 2 caches (1 for each processor if private)
+cache_cfg	l2_cfg;					//	configuration values for Level 2 unified cache
+cache		l3;						//	Level 3 cache
+cache_cfg	l3_cfg;					//	configuration values for Level 3 unified cache
+cache		l4;						//	Level 4 cache
+cache_cfg	l4_cfg;					//	configuration values for Level 4 unified cache
+cache		l5;						//	Level 5 cache
+cache_cfg	l5_cfg;					//	configuration values for Level 5 unified cache
+int32_t		max_mr_queue_size;		//	maximum mr_queue size before stopping input loop
+cache		mem;					//	memory "cache" for collecting statistics only
+cache_cfg	mem_cfg;				//	configuration values for memory pseudo cache
+FILE		*memtracefil;			//	file for optional memory trace output
+char		*mropers[13] = {"read", "write", "modify", "instr", "pfread", "err05", "err06", "pfinstr",
+							"alloc", "free", "stack", "nvalid", "clean"};
+int16_t		multiexpand;			//	set to read multiple files and expand each to multiple procs
+int16_t		nmbr_cores;				//	number of cores used in this run
+int16_t		output_sets;			//	causes set statistics to be output when set to 1
+mr_queue	queues[MAX_PIDS];		//	input queue for each processor
+char		*run_name;				//	name applied to this moola run
+char		*seg_code = "GHISO";	//	character codes for memory segment
+//char		*sharemap[MAX_PIDS];	//	directs unicore file data to processors with shared I-adrs
+pid_t		sim_pid;				//	process id of the current Moola simulation run
+int64_t		sim_time;				//	simulated time
+int64_t		snapshot;				//	take snapshot every snapshots instructions, 0 off
+int64_t		stacklimit[MAX_PIDS];	//	limit of the stack growth for each processor
+int64_t		stacktop[MAX_PIDS];		//	current top of stack for each processor
+int64_t		stklmt_cnt[MAX_PIDS];	//	counts number of stack limit actions for each processor
+int64_t		stktop_cnt[MAX_PIDS];	//	counts number of stack actions for each processor
+int16_t		strict_order;			//	set to 1 if strict ordering is requested
+int16_t		*unimap[MAX_PIDS][MAX_PIDS];	//	-unicore file to processors map
+int32_t		unidlys[MAX_PIDS];		//	-unicore replication delay between processor start times
+int16_t		unirepeats[MAX_PIDS];	//	-unicore files repeat counts
+char		*version = "Moola beta 1.0.0, May 5, 2013";		//	version string
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+//	function pointer declarations for accessing selected trace file format
+////////////////////////////////////////////////////////////////////////////////
+
+void		(*trace_close)(int16_t);
+int32_t		(*trace_open)(int16_t);
+int32_t		(*trace_read)(int16_t, memref *);
+int32_t		(*trace_reopen)(int16_t);
+
+
+
+
+//struct sets mysets[6][64];
+
+
+////////////////////////////////////////////////////////////////////////////////
+//	static variable declarations global to this file only, in alphabetical order
+////////////////////////////////////////////////////////////////////////////////
+
+FILE		*csvf;					//	pointer to csv format output file, global to this file only
+//FILE		*csvf_2;				// 	point to csv format output file, for printing address and set_numbers
+int scheme =0;
+uint64_t cache_flash = 0; 
+uint64_t counter_reflash = 0;
+uint64_t counter_dynamic = 0;
+int increase_way = 0;
+int cache_test = 0;
+int reset_DES = 0;
+uint64_t counter = 0;
+uint64_t dynamic_flash =0;
+int initial_way = 0;
+int final_way;
+
+uint64_t des_key = 0x0000000000000000;
+uint64_t  min_addr = 0xffffffffffffffff;
+uint64_t  max_addr = 0x0;
+uint64_t a_number = 0;
+// please dont forget add #include <inttypes.h>
+//struct adds_sets {
+//   uint64_t address[SIZE];
+//   int  sets[SIZE];
+//};
+//struct adds_sets a_sets;
+
+
+int main(int argc, char * argv[]) {
+
+	//int dobench(int16_t procs, char *bench, int16_t shared) {
+	int16_t		active_ques[MAX_PIDS];	//	array of flags indicating active queues
+	int64_t		batch_time;				//	time at which this batch began
+	//const char		*bench;					//	pointer to benchmark name from input
+	int64_t		break_adrs;				//	address to trigger breakpoint
+	int64_t		break_lnmbr;			//	input line number of trace to trigger breakpoint
+	int16_t		byt;					//	byte index into data array
+	int16_t		fil;					//	loop index for processing multiple -unicore files
+	int64_t		first_acs[MAX_PIDS];	//	time of first instruction for each processor
+	int16_t		input_avail;			//	indicates which files still contain trace data
+	int64_t		instr_count[MAX_PIDS];	//	array of instruction counts 'executed'
+	int64_t		instr_time[MAX_PIDS];	//	array of instruction times within current batch
+	int64_t		in_time;				//	minimum time of input
+	int64_t		last_acs[MAX_PIDS];		//	time of last instruction for each processor
+	int16_t		last_prcr;				//	processor number of last processor accessed
+	int32_t		max_mr_queue_size2;		//	maximum mr_queue size before stopping output loop
+	int16_t		min_proc;				//	index for processor with queue entry having minimum time
+	int64_t		max_instr;				//	maximum instruction time in this batch
+	int32_t		max_qsize;				//	size of largest input queue
+	int32_t		min_qsize;				//	size of smallest input queue
+	int64_t		min_time;				//	finds minimum time of oldest queue entries
+	memref		*mr, *mr1, *mr2;		//	pointers to memrefs
+	int64_t		next_stat;				//	time of next status print
+	int16_t		p;						//	loop index for processor loops
+//	int32_t		processor_id[MAX_PIDS];	//	map process ID to processor_id
+	int16_t		pmap;					//	processor index mapped to current file
+	int64_t		ref_time;				//	time for the memory reference
+	char		sbfr[24];				//	buffer for comma'd number strings
+	char		sbfr2[24];
+	char		sbfr3[24];
+	char		sbfr4[24];
+	char		sbfr5[24];
+	char		sbfr6[24];
+	int16_t		shared = 0;
+	int32_t		stat;					//	status returned by some functions
+
+int i, j, k, s;
+//for(i=0;i<SCHEMES;i++){   // 8 map schemes
+      for (s=0; s < SETS ; s++){
+          mysets[s].elements = 0;
+          mysets[s].info = 0;
+          mysets[s].set_index_info = 0;
+          mysets[s].tag_info = 0;
+          mysets[s].c_total_info=0;
+          for (j=0; j < 42; j++){
+                mysets[s].num_1[j]=0;
+                mysets[s].p1[j]= 0.0;
+                for (k=0; k< 42; k++){
+                        mysets[s].sum_S[j][k]=0;
+                        mysets[s].sum_D[j][k]=0;
+                }
+                 mysets[s].info_bit[j]=0;
+          }
+      }
+//}
+
+	
+	sim_pid = getpid();					//	get Moola's current process ID
+
+	stat = configure(argc, argv);		//	get config info from file(s) and/or command line args
+	if (stat < 0) {
+		fprintf(stdout, "Moola exitting due to configuration errors, code %d.\n", stat);
+		return stat;
+	} else if (stat) {
+		return 0;						//	some form of help was requested, so quit here
+	}
+	
+	stat = initialize();				//	initialize the cache structures
+	if (stat) {
+		fprintf(stdout, "exitting due to cache initialization errors, code %d.\n", stat);
+		return -2;
+	}
+
+	max_mr_queue_size2 = max_mr_queue_size / 2;
+	
+	//	initialize local processor data structures
+	for (p = 0; p < MAX_PIDS; p++) {
+		queues[p].count = 0;
+		queues[p].newest = NULL;
+		queues[p].oldest = NULL;
+		first_acs[p] = 0;
+		last_acs[p] = 0;
+		instr_count[p] = 0;		//	initialize instruction count for each processor
+		instr_time[p] = 0;		//	initialize instruction time for each processor
+	}
+
+	
+	//	open requested input files
+	input_avail = 0;
+	
+	for (fil = 0; fil < in_filcnt; fil++) {
+		stat = trace_open(fil);
+		if (stat == 0) {
+			printf("Unable to open input trace file %s.\n", in_fnames[fil]);
+			return -3;
+		}
+		input_avail |= (1 << fil);
+	}
+	
+
+// open a csv file to save the address and the set numbre
+	
+	 if (csv_fil_name2) {   
+		char *new_filename = (char*) malloc(100*sizeof(char));
+                *new_filename =  *csv_fil_name2;
+		char *file1 = "Results_average_";
+		char *file2 = "Results_by_set_";
+		printf("New_filename: %s\n",concat( concat(file1,csv_fil_name2 ),".csv") );
+
+		csvf_2 = fopen( concat( concat(file1,csv_fil_name2 ),".csv") , "w");
+                if (csvf_2 == NULL) {
+                        printf("ERROR:  could not open %s for writing\n",  concat( concat(file1,csv_fil_name2 )) ) ;
+                        return -1;
+                }
+		csvf_3 = fopen(concat( concat(file2,csv_fil_name2),".csv")  , "w" );
+                if (csvf_2 == NULL) {
+                        printf("ERROR:  could not open %s for writing\n",concat( concat(file2,csv_fil_name2 ))  );
+                        return -1;
+                }
+
+	}
+
+	//	open csv file and print header before starting so simulation doesn't consume
+	//	time and then discover the output file cannot be written and the data is lost.
+	if (csv_fil_name) {
+		csvf = fopen(csv_fil_name, "w");
+		if (csvf == NULL) {
+			printf("ERROR:  could not open '%s' for writing\n", csv_fil_name);
+			return -1;
+		}
+		//  TBD  need to determine how shared is to be determined and marked
+		fprintf(csvf, "Benchmark;Procs;Shared;Sim_time;L1 miss%%;L2 miss%%;L3 miss%%;");
+		fprintf(csvf, "L3 fetch;L3 idle;L3 wait;Mem fetch;Mem idle;Mem wait;");
+		fprintf(csvf, "L3 busy%%;L3 wait%%;Mem busy%%;Mem wait%%;Instructions;Cycles;Cyc/Instr\n");
+	}
+	
+
+	
+	
+	in_time = 1;			//	start of input
+	sim_time = 1;			//	start of simulation
+	next_stat = 1000000;
+	
+	
+	
+	batch_time = 0;				//	initialize batch time
+	last_prcr = 255;			//	pick some processor as last one (best if not first one used)
+	
+	mr1 = get_memref();			//	memory reference for exclusive use as a buffer for -unicore replication
+
+
+
+
+////////////////////////////////////////
+// Change the condition to finish before 	
+//////////////////////////////////////////
+	while (input_avail) {		//  get input data and process it until all end-of-file(s) reached
+
+		min_qsize = 0;
+		max_qsize = 0;
+		
+		//	Try to get data into each processor until one queue gets too big
+		//	The queue conditions are updated after each active file has read a trace record
+		while (min_qsize <= 100  &&  max_qsize < max_mr_queue_size  && input_avail) {
+			if (multiexpand) {
+				///////////////////////////////////////////////////////////////////////////////////////
+				//
+				//	This section of Moola main is used to read individual input files and distribute
+				//	them to multiple processors.  Offsets are added to the input addresses to ensure
+				//	there are no accidental address conflicts between the files.  It is also possible
+				//	to assign an input file to multiple processors to emulate the same program being
+				//	instantiated multiple times in a multi-core system.  The instruction addresses can
+				//	be kept independent or they can be shared.  A trace record is read from an input
+				//	file and then written to the designated processors with the appropriate address
+				//	offsets.  A trace record is then read from the next input file and written to the
+				//	designated processors, etc.  The program attempts to keep about 100 trace records
+				//	in the input queue of each processor to allow some amount of asynchronous progress
+				//	to be made in processing of the trace records.
+				//
+				///////////////////////////////////////////////////////////////////////////////////////
+				
+				for (fil = 0; fil < in_filcnt; fil++) {		//	check each input file
+					if (input_avail & (1 << fil)) {			//	is this file active?
+						
+						stat = trace_read(fil, mr1);
+						if (stat <= 0) {
+							if (unirepeats[fil] > 1) {
+								printf("End of input file '%s' reached, reloading it.\n", in_fnames[fil]);
+								trace_close(fil);
+								stat = trace_reopen(fil);
+								if (stat == 0) {
+									fprintf(stderr, "Unable to reopen input trace file %s.\n", in_fnames[fil]);
+									return -3;
+								}
+								unirepeats[fil]--;			//	decrement file repetition count
+								stat = trace_read(fil, mr);
+								if (stat <= 0) {
+									printf("Error getting trace record after reloading file %s.\n", in_fnames[fil]);
+									input_avail &= ~(1 << fil);		//	clear this file's active bit
+									continue;						//	go to next file in for loop
+								}
+							} else {
+								printf("End of input file '%s' reached.\n", in_fnames[fil]);
+								input_avail &= ~(1 << fil);			//	clear this file's active bit
+								continue;							//	go to next file in for loop
+							}
+						}
+						mr1->time = mr1->linenmbr;			//	time = linenumber for single cycle interleaving
+						
+						for (p = 0; p < nmbr_cores; p++) {
+							pmap = unimap[fil][p];			//	get current mapping
+							if (pmap < 0) {
+								break;						//	processors for this file done
+							}
+							mr2 = get_memref();				//	this will be for queuing
+							*mr2 = *mr1;					//	copy mr1 info to mr2 info
+							mr2->pid = pmap;				//	update processor with mapped id, address offset
+							mr2->asid = asids[pmap];
+							if (mr2->oper == MRINSTR) {
+								mr2->adrs += instr_offs[pmap];
+							} else {
+								mr2->adrs += data_offs[pmap];
+							}
+							mr2->time += unidlys[fil] * p;	//	delay instruction
+#ifdef DEBUG_QUEUE
+							printf("queue_add:  ");
+							print_mr(mr2);
+#endif
+							queue_add(mr2->pid, mr2);		//	add to appropriate processor input queue
+						}	//	end for (p = 0; p < nmbr_cores; p++)
+					}	//	end if (input_avail & (1 << fil))   is this file active?
+				}	//	end for (fil = 0; fil < fil_cnt; fil++)
+				
+				//  compute queue fullness condition at end of each cycle through the input files
+				min_qsize = 1000000;
+				max_qsize = 0;
+				for (p = 0; p < nmbr_cores; p++) {
+					if (queues[p].count < min_qsize) {
+						min_qsize = queues[p].count;
+					}
+					if (queues[p].count > max_qsize) {
+						max_qsize = queues[p].count;
+					}
+				}
+				
+				
+				//	end if (multiexpand)
+			} else {
+				////////////////////////////////////////////////////////////////////////////////
+				//	This section of Moola main reads a single file where the accesses are interleaved
+				//	in large batches.  This is done since many multicore simulators are exceedingly
+				//  slow when interleaving processors one instruction at a time.  Therefore, moola
+				//	reads batches of memory transactions into separate queues for each processor and
+				//	then  extracts them one instruction at a time.  Although this approach will not
+				//	perfectly recreate the interleave that a true multi-core simulation would
+				//	produce, it should be a much better approximation than running 100 or 1000
+				//	instructions from each processor before switching to the next.  The inferred
+				//	interleaving can be disabled by using the "strict_ordering" option.
+				//
+				//	The inferred interleaving is implemented by using a "batch count" and an
+				//	instruction count.  The batch count starts at 0 and keeps track of which
+				//	processors have instructions executed on them.  Whenever the processor
+				//	rotation reaches a processor that has already had instructions in this
+				//	batch, the batch count is incremented by the highest number of instructions
+				//	for a processor in the batch.  The instruction counter is maintained for
+				//	each processor.  All instruction counters are reset to 0 at the beginning
+				//	of a batch and the appropriate instruction counter is incremented each time
+				//	an instruction is processed.  The sum of the batch count and instruction
+				//	count is used as the "time" of the memory reference when it is placed in
+				//	the queue.  The strict_ordering option simply places the line number as the
+				//	memory reference time.
+				////////////////////////////////////////////////////////////////////////////////
+				
+				mr = get_memref();
+				stat = trace_read(0, mr);
+				if (stat == 0) {
+					printf("End of input file '%s' reached\n", in_fnames[0]);
+					input_avail &= ~(1 << 0);		//	clear this file's active bit
+					break;
+				}
+				//	TBD is this check necessary?  Do we need to have the nmbr_cores specified
+				//	or just check to ensure MAX_PID is not exceeded?
+				if (mr->pid >= nmbr_cores) {
+					printf("Input error:  processor ID %d exceeds specified number of cores %d\n",
+						   mr->pid, nmbr_cores);
+				}
+				
+				if (strict_order) {
+					mr->time = mr->linenmbr;
+				} else {
+					if (mr->pid != last_prcr) {
+						last_prcr = mr->pid;
+						if (instr_time[mr->pid] != 0) {
+							//	reached processor with non-zero count implies end of the batch
+							max_instr = 0;
+							for (p = 0; p < nmbr_cores; p++) {
+								if (instr_time[p] > max_instr)
+									max_instr = instr_time[p];
+								instr_time[p] = 0;
+							}
+							batch_time += max_instr;
+							
+							//  compute queue fullness condition at end of batch
+							min_qsize = queues[0].count;
+							max_qsize = min_qsize;
+							for (p = 1; p < nmbr_cores; p++) {
+								if (queues[p].count < min_qsize) {
+									min_qsize = queues[p].count;
+								}
+								if (queues[p].count > max_qsize) {
+									max_qsize = queues[p].count;
+								}
+							}
+						}
+					}
+					if (mr->oper == MRINSTR  ||  data_only) {
+						instr_time[mr->pid]++;					//	increment count for instructions
+						if (instr_time[mr->pid] == batch_instr_count) {
+							printf("WARNING:  batch_instr_count exceeded at line %lld\n", mr->linenmbr);
+							print_mr(mr);
+						}
+					}
+					mr->time = batch_time + instr_time[mr->pid];
+				}	//	end if (strict_order) else
+				
+#ifdef DEBUG_QUEUE
+				printf("queue_add:  ");
+				print_mr(mr);
+#endif
+				queue_add(mr->pid, mr);		//	add to appropriate processor input queue
+				
+			}	//	end if (multiexpand) else
+		
+		}	//	end while (min_qsize <= 100  &&  max_qsize < max_mr_queue_size)
+		
+		
+
+		//	build mask of queues that are not empty
+		for (p = 0; p < nmbr_cores; p++) {
+			active_ques[p] = (queues[p].count != 0);
+		}
+
+		//	process the memref input data starting with oldest data while all queues have entries
+		//	Get more input if min_qsize is below 10; unless the max_qsize is > 800 or EOF was reached
+		while (min_qsize > 20  ||  max_qsize > max_mr_queue_size2  ||  input_avail == 0) {
+			min_time = sim_time + 1000000000;		//	at least 1 queue should be less than this
+			for (p = 0; p < nmbr_cores; p++) {
+				if (queues[p].count != 0) {
+					if (queues[p].oldest->time < min_time) {
+						min_time = queues[p].oldest->time;
+						min_proc = p;
+					}
+				}
+			}
+////////////////
+			if (min_time == sim_time + 1000000000) {
+				break;								//	queue is empty, so break out of while loop
+			}
+			mr = queue_take(min_proc);
+			if (min_time > sim_time) {
+				sim_time = min_time;				//	sim_time advances to minimum time
+			} else {
+				mr->time = sim_time;				//	mr->time advances to current sim_time
+			}
+			
+#ifdef DEBUG_QUEUE
+			printf("queue_remove:  ");
+			print_mr(mr);
+#endif
+			//	set breakpoints here when looking for specific addresses, line numbers, etc
+			break_adrs = 0xbabe4ace00;
+			if (mr->adrs == break_adrs) {
+				break_adrs = break_adrs;
+			}
+			break_lnmbr = 5404845;
+			if (mr->linenmbr == break_lnmbr) {
+				break_lnmbr = break_lnmbr;
+			}
+			//  end of breakpoint area
+			
+			//	update access time tracker for the processor min_proc
+			if (first_acs[min_proc] == 0) {
+				first_acs[min_proc] = sim_time;
+			}
+			last_acs[min_proc] = sim_time;
+
+			ref_time = 0;
+			if (mr->oper == MRINSTR) {
+				ref_time = reference(&l1i[min_proc], mr, NULL);		//	process instruction fetch
+			} else if (mr->oper < MRMODFY) {
+				ref_time = reference(&l1d[min_proc], mr, NULL);		//	process data reference
+			} else if (mr->oper == MRMODFY) {
+				mr->oper = MRREAD;
+				for (byt = 0; byt < mr->size; byt++) {
+					mr->data[byt] ^= 5;								//	makes orig data different
+				}
+				ref_time = reference(&l1d[min_proc], mr, NULL);		//	process read reference
+				mr->oper = MRWRITE;
+				for (byt = 0; byt < mr->size; byt++) {
+					mr->data[byt] ^= 5;								//	back to final written data vals
+				}
+				mr->time = ref_time;								//	indicate new start time for write
+				ref_time = reference(&l1d[min_proc], mr, NULL);	//	process write reference
+			} else if (mr->oper == XALLOC) {
+				halloc(mr);							//	process this heap allocation
+			} else if (mr->oper == XFREE) {
+				hfree(mr);							//	process this heap free
+			} else if (mr->oper == XSTACK) {
+				stktop_cnt[mr->pid]++;				//	increment count of stack actions
+				stacktop[mr->pid] = mr->adrs;		//	update stack top
+				if (mr->adrs < stacklimit[mr->pid]) {
+					stacklimit[mr->pid] = mr->adrs;	//	update stacklimit
+					stklmt_cnt[mr->pid]++;			//	and count action
+				}
+#ifdef DEBUG_STACK
+				printf("stack top[%d]:  %12llx,  stack limit:  %12llx\n",
+					   mr->pid, stacktop[mr->pid], stacklimit[mr->pid]);
+#endif
+			} else {
+				printf("Unknown input file operation code: %d from line %lld\n",
+					   mr->oper, mr->linenmbr);
+			}
+//#define DEBUG_TIME
+#ifdef DEBUG_TIME
+			char		*mr_codes = "LSMI----AFP";
+			if (ref_time > 700 * nmbr_cores) {
+				printf("%6lld: %c %02d %012llx %d:  %lld\n",
+					   mr->linenmbr, mr_codes[mr->oper], mr->pid, mr->adrs, mr->size, ref_time);
+			}
+			int64_t		estimate;
+			int64_t		miss;
+			instrs = 0;
+			cycles = 0;
+
+			if (ref_time > 500) {
+				printf("%6lld: %c %02d %012llx %d:  %lld\n",
+					   mr->linenmbr, mr_codes[mr->oper], mr->pid, mr->adrs, mr->size, ref_time);
+			}
+			if (sim_time > next_stat) {
+				printf("\n\ncurrent simulation time %s\n", int64_to_str(sim_time, sbfr));
+				for (p = 0; p < nmbr_cores; p++) {
+					printf("Processor %d first access at %s,", p, int64_to_str(first_acs[p], sbfr));
+					printf(" last access at %s\n", int64_to_str(last_acs[p], sbfr));
+					instrs += l1i[p].fetch[3];
+					cycles += last_acs[p] - first_acs[p];
+				}
+				for (p = 0; p < nmbr_cores; p++) {
+					fetch = l1d[p].fetch[0] + l1d[p].fetch[1] + l1d[p].fetch[3];
+					miss = l1d[p].miss[0] + l1d[p].miss[1]  + l1d[p].miss[3];
+					estimate = fetch * l1d[p].config->access + miss * mem.config->access + l1d[p].idle_time;
+					printf("Cache %s idle time %s,", l1d[p].name, int64_to_str(l1d[p].idle_time, sbfr));
+					printf(" wait time %3s", int64_to_str(l1d[p].wait_time, sbfr));
+					printf(" fetches %s", int64_to_str(fetch, sbfr));
+					printf(" misses %s", int64_to_str(miss, sbfr));
+					printf(" estimated %s\n", int64_to_str(estimate, sbfr));
+				}
+				for (p = 0; p < nmbr_cores; p++) {
+					fetch = l1i[p].fetch[0] + l1i[p].fetch[1] + l1i[p].fetch[3];
+					miss = l1i[p].miss[0] + l1i[p].miss[1]  + l1i[p].miss[3];
+					estimate = fetch * l1i[p].config->access + miss * mem.config->access + l1i[p].idle_time;
+					printf("Cache %s idle time %s,", l1i[p].name, int64_to_str(l1i[p].idle_time, sbfr));
+					printf(" wait time %3s", int64_to_str(l1i[p].wait_time, sbfr));
+					printf(" fetches %s", int64_to_str(fetch, sbfr));
+					printf(" misses %s", int64_to_str(miss,  sbfr));
+					printf(" estimated %s\n", int64_to_str(estimate, sbfr));
+				}
+				for (p = 0; p < nmbr_cores; p++) {
+					fetch = l2[p].fetch[0] + l2[p].fetch[1] + l2[p].fetch[3];
+					miss = l2[p].miss[0] + l2[p].miss[1]  + l2[p].miss[3];
+					estimate = fetch * l2[p].config->access + miss * mem.config->access + l2[p].idle_time;
+					printf("Cache %s  idle time %s,", l2[p].name, int64_to_str(l2[p].idle_time, sbfr));
+					printf(" wait time %3s", int64_to_str(l2[p].wait_time, sbfr));
+					printf(" fetches %s", int64_to_str(fetch, sbfr));
+					printf(" misses %s", int64_to_str(miss,  sbfr));
+					printf(" estimated %s\n", int64_to_str(estimate, sbfr));
+				}
+				fetch = l3.fetch[0] + l3.fetch[1] + l3.fetch[3];
+				miss = l3.miss[0] + l3.miss[1]  + l3.miss[3];
+				estimate = fetch * l3.config->access + miss * mem.config->access + l3.idle_time;
+				printf("Cache %s     idle time %s,", l3.name, int64_to_str(l3.idle_time, sbfr));
+				printf(" wait time %3s", int64_to_str(l3.wait_time, sbfr));
+				printf(" fetches %s", int64_to_str(fetch, sbfr));
+				printf(" misses %s", int64_to_str(miss,  sbfr));
+				printf(" estimated %s\n", int64_to_str(estimate, sbfr));
+				fetch = mem.fetch[0] + mem.fetch[1] + mem.fetch[3];
+				miss = mem.miss[0] + mem.miss[1]  + mem.miss[3];
+				estimate = fetch * mem.config->access + mem.idle_time;
+				printf("Cache %s    idle time %s,", mem.name, int64_to_str(mem.idle_time, sbfr));
+				printf(" wait time %3s", int64_to_str(mem.wait_time, sbfr));
+				printf(" fetches %s", int64_to_str(fetch, sbfr));
+				printf(" misses %s", int64_to_str(miss,  sbfr));
+				printf(" estimated %s\n", int64_to_str(estimate, sbfr));
+				printf("Total instructions %s,  total cycles %s,   CPI %5.2f\n",
+					   int64_to_str(instrs, sbfr), int64_to_str(cycles, sbfr2), (double) cycles / (double) instrs);
+				next_stat += 1000000;
+			}
+#endif
+			free_memref(mr);						//	return memref to free list
+			if (queues[min_proc].count > 0) {
+				//	delay next reference of this processor until this reference can complete
+				queues[min_proc].oldest->time = ref_time;
+			}
+			
+			//	update queue sizes to see if new input should be gathered
+			//	ignore any queues that were empty when removals started
+			min_qsize = max_mr_queue_size;
+			max_qsize = 0;
+			for (p = 0; p < nmbr_cores; p++) {
+				if (active_ques[p] && queues[p].count < min_qsize) {
+					min_qsize = queues[p].count;
+				}
+				if (queues[p].count > max_qsize) {
+					max_qsize = queues[p].count;
+				}
+			}
+		}	//  end while (min_qsize > 20  ||  max_qsize > max_mr_queue_size2  ||  input_avail == 0)
+		
+	}	//	while (input_avail)  get input data and process it until end-of-file(s)
+	
+	//	Need multiple choice based on file input format, or needs to be indirect pointer
+	for (fil = 0; fil < in_filcnt; fil++) {
+		trace_close(fil);
+	}
+	int64_t		l1fetch, l1miss;
+	int64_t		l2fetch, l2miss;
+	int64_t		l3fetch, l3miss;
+	int64_t		max_time, m_fetch;
+	int64_t		fetches;				//	statistics accumulation
+	int64_t		instrs;					//	statistics accumulation
+	int64_t		misses;					//	statistics accumulation
+	int64_t		cycles;					//	statistics accumulation
+	instrs = 0;
+	cycles = 0;
+	l1fetch = 0;
+	l1miss  = 0;
+	l2fetch = 0;
+	l2miss  = 0;
+	l3fetch = 0;
+	l3miss  = 0;
+	max_time = 0;
+	m_fetch = 0;
+	
+	printf("\n\nEnd of simulation at time %s\n", int64_to_str(sim_time, sbfr));
+	for (p = 0; p < nmbr_cores; p++) {
+		printf("Processor %d first access: %s,", p, int64_to_str(first_acs[p], sbfr));
+		printf(" last access: %s,", int64_to_str(last_acs[p], sbfr));
+		printf(" instructions: %s", int64_to_str(l1i[p].fetch[3], sbfr));
+		printf(" CPI: %5.2f\n", ((float)(last_acs[p] - first_acs[p])) / (float)l1i[p].fetch[3]);
+		instrs += l1i[p].fetch[3];
+		cycles += last_acs[p] - first_acs[p];
+		l1fetch += l1i[p].fetch[0] +  l1i[p].fetch[1] + l1i[p].fetch[3]
+				 + l1d[p].fetch[0] +  l1d[p].fetch[1] + l1d[p].fetch[3];
+		l1miss  += l1i[p].miss[0]  +  l1i[p].miss[1]  + l1i[p].miss[3]
+				 + l1d[p].miss[0]  +  l1d[p].miss[1]  + l1d[p].miss[3];
+		l2fetch += l2[p].fetch[0] +  l2[p].fetch[1] + l2[p].fetch[3];
+		l2miss  += l2[p].miss[0]  +  l2[p].miss[1]  + l2[p].miss[3];
+		if (last_acs[p] > max_time) {
+			max_time = last_acs[p];
+		}
+	}
+	for (p = 0; p < nmbr_cores; p++) {
+		fetches = l1i[p].fetch[0] +  l1i[p].fetch[1] + l1i[p].fetch[3];
+		misses  = l1i[p].miss[0]  + l1i[p].miss[1]  + l1i[p].miss[3];
+		printf("Cache %s accesses %s,  ", l1i[p].name, int64_to_str(fetches, sbfr));
+		printf("misses %s,  ", int64_to_str(misses, sbfr));
+		printf("idle time %s,  ", int64_to_str(l1i[p].idle_time, sbfr));
+		printf("wait time %s\n", int64_to_str(l1i[p].wait_time, sbfr));
+	}
+	for (p = 0; p < nmbr_cores; p++) {
+		fetches = l1d[p].fetch[0] +  l1d[p].fetch[1] + l1d[p].fetch[3];
+		misses  = l1d[p].miss[0]  + l1d[p].miss[1]  + l1d[p].miss[3];
+		printf("Cache %s accesses %s,  ", l1d[p].name, int64_to_str(fetches, sbfr));
+		printf("misses %s,  ", int64_to_str(misses, sbfr));
+		printf("idle time %s,  ", int64_to_str(l1d[p].idle_time, sbfr));
+		printf(" wait time %s\n", int64_to_str(l1d[p].wait_time, sbfr));
+	}
+	for (p = 0; p < nmbr_cores; p++) {
+		fetches = l2[p].fetch[0] +  l2[p].fetch[1] + l2[p].fetch[3];
+		misses  = l2[p].miss[0]  + l2[p].miss[1]  + l2[p].miss[3];
+		printf("Cache %s accesses %s,  ", l2[p].name, int64_to_str(fetches, sbfr));
+		printf("misses %s,  ", int64_to_str(misses, sbfr));
+		printf("idle time %s,  ", int64_to_str(l2[p].idle_time, sbfr));
+		printf(" wait time %s\n", int64_to_str(l2[p].wait_time, sbfr));
+	}
+	l3fetch = l3.fetch[0] + l3.fetch[1] + l3.fetch[3];
+	l3miss  = l3.miss[0]  + l3.miss[1]  + l3.miss[3];
+	printf("Cache %s accesses %s,  ", l3.name, int64_to_str(l3fetch, sbfr));
+	printf("misses %s,  ", int64_to_str(l3miss, sbfr));
+	printf("idle time %s,  ", int64_to_str(l3.idle_time, sbfr));
+	printf(" wait time %s\n", int64_to_str(l3.wait_time, sbfr));
+
+	m_fetch = mem.fetch[0] + mem.fetch[1] + mem.fetch[3];
+	printf("Cache %s accesses %s,  ", mem.name, int64_to_str(m_fetch, sbfr));
+	printf("        idle time %s,  ", int64_to_str(mem.idle_time, sbfr));
+	printf(" wait time %s\n", int64_to_str(mem.wait_time, sbfr) );
+	printf("Total instructions: %s,  total cycles: %s,   average CPI %5.2f   net CPI %5.2f\n",
+		   int64_to_str(instrs, sbfr), int64_to_str(cycles, sbfr2), (double) cycles / (double) instrs,
+		   (double) max_time / (double) instrs);
+	
+	
+	//         bench procs share sim_time l1 miss% l2 miss% l3 miss%
+	fprintf(csvf, "%s;%d;%d;%s;%5.2f;%5.2f;%5.2f;", run_name, nmbr_cores, shared, int64_to_str(sim_time, sbfr),
+			(double) l1miss * 100.0 / (double) l1fetch, (double) l2miss * 100.0 / (double) l2fetch,
+			(double) l3miss * 100.0 / (double) l3fetch);
+	//			l3fet l3idl l3wait MemFet MemIdl MemWait
+	fprintf(csvf, "%s;%s;%s;%s;%s;%s;",
+			int64_to_str(fetches, sbfr), int64_to_str(l3.idle_time, sbfr2),
+			int64_to_str(l3.wait_time, sbfr3), int64_to_str(fetches, sbfr4),
+			int64_to_str(mem.idle_time, sbfr5), int64_to_str(mem.wait_time, sbfr6));
+	//			   l3bs% l3wt% Mbs%  Mwt%  nstr cycl cpi
+	//  should probably delete l3wt% and Mwt% as not useful (can be > 100  or do per processor average
+	fprintf(csvf, "%5.2f;%5.2f;%5.2f;%5.2f;%s;%s;%5.2f\n",
+			(double) (sim_time - l3.idle_time) * 100.0 / (double) sim_time,
+			(double) l3.wait_time * 100.0 / (double) sim_time,
+			(double) (sim_time - mem.idle_time) * 100.0 / (double) sim_time,
+			(double) mem.wait_time * 100.0 / (double) sim_time,
+			int64_to_str(instrs, sbfr), int64_to_str(cycles, sbfr2),
+			(double) cycles / (double) instrs);
+	if (scheme == 7) {  // only in DES scheme case
+ 		 fprintf(csvf, "Times refreshing the L3 cache = %" PRIu64 "\n", counter);
+	}
+	
+	if (dynamic_flash > 0) {  // only in DES scheme case   
+		 fprintf(csvf, "Dynamicaly modify the cache ways every = %" PRIu64 " instructions\n", dynamic_flash ); 
+ 		 fprintf(csvf, "Times dynamicaly changing the cache = %" PRIu64 "\n", counter);
+	}
+	
+	//fflush(csvf);
+
+	fclose(csvf);
+
+//Print the final values in 
+
+	if (csv_fil_name2) {
+       
+        	compute_entropies(mysets,set__lines);
+        	print_results(csvf_2,csvf_3,mysets,scheme,set__lines); 
+
+// Cose the new file pointer 
+		fclose(csvf_2);	
+        	fclose(csvf_3);
+	}
+	
+    return 0;
+
+	for (p = 0; p < nmbr_cores; p++) {
+		print_cache(&l1i[p]);
+		print_cache(&l1d[p]);
+		if (l2_cfg.shared == 'P') {
+			print_cache(&l2[p]);
+		}
+	}
+	if (l2_cfg.shared == 'S') {
+		print_cache(&l2[0]);
+	}
+	print_cache(&l3);
+	print_cache(&mem);
+	
+    return 0;
+}
+
+
+/*  test code for int64_to_str  --  TBD saving to test signed output implementation
+ printf("5:  %s\n", int64_to_str(5, sbfr));
+ printf("104:  %s\n", int64_to_str(104, sbfr));
+ printf("123456:  %s\n", int64_to_str(123456, sbfr));
+ printf("1234567:  %s\n", int64_to_str(1234567, sbfr));
+ printf("12345678:  %s\n", int64_to_str(12345678, sbfr));
+ printf("123456789:  %s\n", int64_to_str(123456789, sbfr));
+ printf("1234567890:  %s\n", int64_to_str(1234567890, sbfr));
+ printf("123456789012:  %s\n", int64_to_str(123456789012, sbfr));
+ printf("12345678901234:  %s\n", int64_to_str(12345678901234, sbfr));
+ printf("1234567890123456:  %s\n", int64_to_str(1234567890123456, sbfr));
+ printf("123456789012345678:  %s\n", int64_to_str(123456789012345678, sbfr));
+ printf("5:  %s\n", int64_to_str(5, "                     "));
+ printf("5:  %s\n", int64_to_str(5, "                     "));
+ */
+

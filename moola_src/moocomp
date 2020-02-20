@@ -1,0 +1,3 @@
+#
+clang -Wformat moola.c configure.c reference.c trace_gleipnir.c trace_moola.c trace_pin.c utils.c -lm -lz -o ../moola
+

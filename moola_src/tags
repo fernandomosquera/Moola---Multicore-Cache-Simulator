@@ -1,0 +1,381 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+BLK_RES	moola.h	371;"	d
+BYT_RES	moola.h	368;"	d
+CBDIRTY	moola.h	274;"	d
+CBFEMNT	moola.h	278;"	d
+CBLEMNT	moola.h	279;"	d
+CBLMNTMSK	moola.h	283;"	d
+CBLSTMSK	moola.h	281;"	d
+CBLSTRD	moola.h	276;"	d
+CBLSTWR	moola.h	277;"	d
+CBTOUCH	moola.h	275;"	d
+CBVALID	moola.h	273;"	d
+CLCLEAN	moola.h	207;"	d
+CLNVALD	moola.h	206;"	d
+DATAVALS	moola.h	61;"	d
+DEAD_WR	moola.h	378;"	d
+DUST_WR	moola.h	377;"	d
+FIND_WS	trace_gleipnir.c	98;"	d	file:
+FIND_WS	trace_moola.c	87;"	d	file:
+FIND_WS	trace_pin.c	90;"	d	file:
+FIND_WS	tracegz.c	59;"	d	file:
+FSIZE	moola.h	64;"	d
+GLEIPNIR	moola.h	62;"	d
+GLOBAL	moola.h	176;"	d
+HEAP	moola.h	177;"	d
+INSTR	moola.h	178;"	d
+IS_PREF	moola.h	215;"	d
+LIVE_WR	moola.h	375;"	d
+LMT_RES	moola.h	369;"	d
+MAX_DISTR_BLKS	moola.h	82;"	d
+MAX_MR_DATA	moola.h	76;"	d
+MAX_PIDS	moola.h	79;"	d
+MEMSTAT_HASH	moola.h	411;"	d
+MEMSTAT_SIZE	moola.h	409;"	d
+MIXD_WR	moola.h	379;"	d
+MRBASE	moola.h	214;"	d
+MRINSTR	moola.h	199;"	d
+MRMODFY	moola.h	198;"	d
+MRPREF	moola.h	210;"	d
+MRRDSTAT	moola.h	284;"	d
+MRREAD	moola.h	196;"	d
+MRWRITE	moola.h	197;"	d
+MRWRSTAT	moola.h	285;"	d
+OTHER	moola.h	180;"	d
+PRINSTR	moola.h	201;"	d
+PRREAD	moola.h	200;"	d
+READ_ACS	moola.h	373;"	d
+SKIP_WS	trace_gleipnir.c	99;"	d	file:
+SKIP_WS	trace_moola.c	88;"	d	file:
+SKIP_WS	trace_pin.c	91;"	d	file:
+SKIP_WS	tracegz.c	60;"	d	file:
+STACK	moola.h	179;"	d
+SUB_RES	moola.h	370;"	d
+UNTOUCH	moola.h	374;"	d
+USLS_WR	moola.h	376;"	d
+VSIZE	moola.h	65;"	d
+XALLOC	moola.h	202;"	d
+XFREE	moola.h	203;"	d
+XNULL	moola.h	205;"	d
+XSTACK	moola.h	204;"	d
+access	moola.h	/^	int16_t		access;				\/\/	number of processor clocks to access this cache$/;"	m	struct:cache_rec
+access	moola.h	/^	int16_t		access;		\/\/	number of processor cycles for data access time$/;"	m	struct:cache_cfg_rec
+access	moola.h	/^	int64_t		access[5];	\/\/	number of accesses to this set (G, H, S, I, O)$/;"	m	struct:cacheset_rec
+acss_time	moola.h	/^	int64_t		acss_time[MAX_DISTR_BLKS];	\/\/	cache accessing until the time point$/;"	m	struct:cache_rec
+address	moola.h	/^	int64_t		address;			\/\/	actual address for this stat record$/;"	m	struct:memstat_rec
+adrs	moola.h	/^	int64_t		adrs;		\/\/  start address of the cacheline$/;"	m	struct:cline_rec
+adrs	moola.h	/^	int64_t		adrs;		\/\/  start address of the memory reference$/;"	m	struct:memref_rec
+alloctime	moola.h	/^	int64_t		alloctime;	\/\/	time of allocation (is last field to align data as$/;"	m	struct:cline_rec
+arch	moola.h	/^	char		arch;		\/\/	architecture of cache: (b - blocking, d - distributed, h - hit-under-miss)$/;"	m	struct:cache_cfg_rec
+assoc	moola.h	/^	int16_t		assoc;		\/\/	associativity of the cache, 0 => fully associative$/;"	m	struct:cache_cfg_rec
+assoc	moola.h	/^	int8_t		assoc;				\/\/	associativity of cache (1-16), 0 => fully associative$/;"	m	struct:cache_rec
+batch_instr_count	moola.c	/^int32_t		batch_instr_count;		\/\/	number of instructions expected per interleaved batch$/;"	v
+blkmiss	moola.h	/^	int64_t		blkmiss[XALLOC];	\/\/	subblock miss count for each access type, w\/wo prefetch$/;"	m	struct:cache_rec
+bndx	trace_gleipnir.c	/^int16_t		bndx;			\/\/	index to the current byte of data (function global)$/;"	v
+bndx	trace_moola.c	/^int16_t		bndx;			\/\/	index to the current byte of data (function global)$/;"	v
+bndx	trace_pin.c	/^int16_t		bndx;			\/\/	index to the current byte of data (function global)$/;"	v
+bndx	tracegz.c	/^int16_t		bndx;			\/\/	index to the current byte of data (function global)$/;"	v
+bytes	trace_gleipnir.c	/^uint8_t		*bytes;			\/\/	pointer to data value bytes (function global)$/;"	v
+bytes	trace_moola.c	/^uint8_t		*bytes;			\/\/	pointer to data value bytes (function global)$/;"	v
+bytes	trace_pin.c	/^uint8_t		*bytes;			\/\/	pointer to data value bytes (function global)$/;"	v
+bytes	tracegz.c	/^uint8_t		*bytes;			\/\/	pointer to data value bytes (function global)$/;"	v
+bytes_read	moola.h	/^	int64_t		bytes_read;			\/\/  total bytes read$/;"	m	struct:cache_rec
+bytes_write	moola.h	/^	int64_t		bytes_write;		\/\/	total bytes written$/;"	m	struct:cache_rec
+c	trace_gleipnir.c	/^char		c;				\/\/  character from input trace file (function global)$/;"	v
+c	trace_moola.c	/^char		c;				\/\/  character from input trace file (function global)$/;"	v
+c	trace_pin.c	/^char		c;				\/\/  character from input trace file (function global)$/;"	v
+c	tracegz.c	/^char		c;				\/\/  character from input trace file (function global)$/;"	v
+c2	trace_pin.c	/^char		c2;				\/\/  second character from input trace file (function global)$/;"	v
+cache	moola.h	/^typedef struct cache_rec	cache;$/;"	t	typeref:struct:cache_rec
+cache_cfg	moola.h	/^} cache_cfg;$/;"	t	typeref:struct:cache_cfg_rec
+cache_cfg_rec	moola.h	/^typedef struct cache_cfg_rec {$/;"	s
+cache_rec	moola.h	/^struct cache_rec {$/;"	s
+cacheline	moola.h	/^typedef struct cline_rec	cacheline;$/;"	t	typeref:struct:cline_rec
+cacheset	moola.h	/^typedef struct cacheset_rec	cacheset;$/;"	t	typeref:struct:cacheset_rec
+cacheset_rec	moola.h	/^struct cacheset_rec {$/;"	s
+cap_blk	moola.h	/^	int64_t		cap_blk[XALLOC];	\/\/	capacity subblock miss count for each access type, w\/wo prefetch$/;"	m	struct:cache_rec
+cap_miss	moola.h	/^	int64_t		cap_miss[XALLOC];	\/\/	capacity miss count for each access type, w\/wo prefetch$/;"	m	struct:cache_rec
+cfg_fil_name	moola.c	/^char		*cfg_fil_name;			\/\/	configuration output file name$/;"	v
+char_val	trace_gleipnir.c	/^static char char_val[256] = { 0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,  \/* 00-0f *\/$/;"	v	file:
+char_val	trace_moola.c	/^static char char_val[256] = { 0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,  \/* 00-0f *\/$/;"	v	file:
+char_val	trace_pin.c	/^static char char_val[256] = { 0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,  \/* 00-0f *\/$/;"	v	file:
+char_val	tracegz.c	/^static char char_val[256] = { 0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,  \/* 00-0f *\/$/;"	v	file:
+cl_init	reference.c	/^void		cl_init(cacheline *cl) {$/;"	f
+classify_miss	reference.c	/^int16_t classify_miss(cache *cash, memref *mr) {$/;"	f
+clean	moola.h	/^	int64_t		clean[5];	\/\/	number of cleans of a line in this set (G, H, S, I, O)$/;"	m	struct:cacheset_rec
+clean_all	reference.c	/^void		clean_all(cache *cash) {$/;"	f
+cline_rec	moola.h	/^struct cline_rec {$/;"	s
+close_trace_gz	tracegz.c	/^void close_trace_gz(int16_t fil) {$/;"	f
+clr_bit	utils.c	/^void clr_bit(int8_t *aray, int16_t bit) {$/;"	f
+cmpl_blk	moola.h	/^	int64_t		cmpl_blk[XALLOC];	\/\/	compulsary subblock miss count for each access type, w\/wo prefetch$/;"	m	struct:cache_rec
+cmpl_miss	moola.h	/^	int64_t		cmpl_miss[XALLOC];	\/\/	compulsary miss count for each access type, w\/wo prefetch$/;"	m	struct:cache_rec
+cntrs	moola.h	/^	int64_t		cntrs[5][4][7];		\/\/  global\/stack\/heap\/instr\/other, byte\/element\/subblk\/blk,$/;"	m	struct:cache_rec
+coherent	moola.h	/^	char		coherent;	\/\/	coherency policy, n - none, m - MSI, e - MESI, o - MOSI$/;"	m	struct:cache_cfg_rec
+comb_i_d	moola.c	/^int16_t		comb_i_d;				\/\/	combine i-cache d-cache statistics when non-zero$/;"	v
+conf_blk	moola.h	/^	int64_t		conf_blk[XALLOC];	\/\/	conflict subblock miss count for each access type, w\/wo prefetch$/;"	m	struct:cache_rec
+conf_miss	moola.h	/^	int64_t		conf_miss[XALLOC];	\/\/	conflict miss count for each access type, w\/wo prefetch$/;"	m	struct:cache_rec
+config	moola.h	/^	cache_cfg	*config;			\/\/	pointer to the configuration record used by this cache$/;"	m	struct:cache_rec
+configure	configure.c	/^int32_t	configure(int argc, char * argv[]) {$/;"	f
+configure_ivybridge	configure.c	/^void configure_ivybridge() {$/;"	f
+control	moola.h	/^	int16_t		control;	\/\/	number of processor cycles for control access time$/;"	m	struct:cache_cfg_rec
+count	moola.h	/^	int32_t		count;		\/\/	number of entries in the queue$/;"	m	struct:queue_rec
+cptr	trace_gleipnir.c	/^char		*cptr;			\/\/	pointer to next character in ibfr (function global)$/;"	v
+cptr	trace_moola.c	/^char		*cptr;			\/\/	pointer to next character in ibfr (function global)$/;"	v
+cptr	trace_pin.c	/^char		*cptr;			\/\/	pointer to next character in ibfr (function global)$/;"	v
+cptr	tracegz.c	/^char		*cptr;			\/\/	pointer to next character in ibfr (function global)$/;"	v
+create_test_gzfile	trace_moola.c	/^void create_test_gzfile() {$/;"	f
+create_test_gzfile	tracegz.c	/^void create_test_gzfile() {$/;"	f
+crntfndx	trace_gleipnir.c	/^int16_t		crntfndx;		\/\/	current file index for use by sub function error reporting (function global)$/;"	v
+crntfndx	trace_moola.c	/^int16_t		crntfndx;		\/\/	current file index for use by sub function error reporting (function global)$/;"	v
+crntfndx	trace_pin.c	/^int16_t		crntfndx;		\/\/	current file index for use by sub function error reporting (function global)$/;"	v
+csv_fil_name	moola.c	/^char		*csv_fil_name;			\/\/	csv output file name$/;"	v
+csvf	moola.c	/^FILE		*csvf;					\/\/	pointer to csv format output file, global to this file only$/;"	v
+data	moola.h	/^	uint8_t		*data;		\/\/  blocksize bytes of cacheline data$/;"	m	struct:cline_rec
+data	moola.h	/^	uint8_t		data[MAX_MR_DATA];	\/\/  memory reference data$/;"	m	struct:memref_rec
+data_offs	moola.c	/^int64_t		data_offs[MAX_PIDS];	\/\/	data address offsets used with -unicore$/;"	v
+data_only	moola.c	/^int16_t		data_only;				\/\/	flag set when no instructions are traced$/;"	v
+default_cfname	configure.c	/^char		default_cfname[100];$/;"	v
+defaults	configure.c	/^void defaults(void) {$/;"	f
+dirty	moola.h	/^	int16_t		dirty;		\/\/	dirty bits for up to 16 subblocks$/;"	m	struct:cline_rec
+error	utils.c	/^void error(char * msg, int rval) {$/;"	f
+evict	moola.h	/^	int64_t		evict[5];	\/\/	number of evictions from this set (G, H, S, I, O)$/;"	m	struct:cacheset_rec
+exclusiv	moola.h	/^	int16_t		exclusiv;	\/\/	exclusive bits for up to 16 subblocks$/;"	m	struct:cline_rec
+fetch	moola.h	/^	int64_t		fetch[5];	\/\/	number of fetches of this set (G, H, S, I, O)$/;"	m	struct:cacheset_rec
+fetch	moola.h	/^	int64_t		fetch[XALLOC];		\/\/	fetch count for each access type, w\/wo prefetch$/;"	m	struct:cache_rec
+flush_rate	moola.c	/^int64_t		flush_rate;				\/\/	flush caches after every flush_rate instructions$/;"	v
+fname	moola.h	/^	char		fname[128];	\/\/	function name$/;"	m	struct:memref_rec
+free_memref	utils.c	/^void free_memref(memref *mr) {$/;"	f
+free_mrs	moola.c	/^memref		*free_mrs;				\/\/	list of free memref instances$/;"	v
+get_bit	utils.c	/^int8_t get_bit(int8_t *aray, int16_t bit) {$/;"	f
+get_dec	trace_moola.c	/^void get_dec(void) {		\/\/  get decimal value from input trace line$/;"	f
+get_dec	tracegz.c	/^void get_dec(void) {		\/\/  get decimal value from input trace line$/;"	f
+get_dec_pin	trace_pin.c	/^void get_dec_pin(void) {		\/\/  get decimal value from input trace line$/;"	f
+get_hex	trace_moola.c	/^void get_hex(void) {		\/\/  get hexadecimal value from input trace line$/;"	f
+get_hex	tracegz.c	/^void get_hex(void) {		\/\/  get hexadecimal value from input trace line$/;"	f
+get_hex_pin	trace_pin.c	/^void get_hex_pin(void) {		\/\/  get hexadecimal value from input trace line with required 0x lead$/;"	f
+get_hexbytes	trace_moola.c	/^void get_hexbytes(void) {	\/\/  get hexadecimal value from input trace line as sequence of bytes$/;"	f
+get_hexbytes	tracegz.c	/^void get_hexbytes(void) {	\/\/  get hexadecimal value from input trace line as sequence of bytes$/;"	f
+get_hexbytes_pin	trace_pin.c	/^void get_hexbytes_pin(void) {	\/\/  get hexadecimal value from input trace line as sequence of bytes$/;"	f
+get_memref	utils.c	/^memref *get_memref() {$/;"	f
+glget_dec	trace_gleipnir.c	/^void glget_dec(void) {		\/\/  get decimal value from input trace line$/;"	f
+glget_hex	trace_gleipnir.c	/^void glget_hex(void) {		\/\/  get hexadecimal value from input trace line$/;"	f
+glget_hexbytes	trace_gleipnir.c	/^void glget_hexbytes(void) {	\/\/  get hexadecimal value from input trace line as sequence of bytes$/;"	f
+gzfil	trace_gleipnir.c	/^gzFile		*gzfil[8];		\/\/	pointers to gzipped trace files for input (static)$/;"	v
+gzfil	trace_moola.c	/^gzFile		*gzfil[8];		\/\/	pointers to gzipped trace files for input (static)$/;"	v
+gzfil	trace_pin.c	/^gzFile		*gzfil[8];		\/\/	pointers to gzipped trace files for input (static)$/;"	v
+gzfname	tracegz.c	/^char		*gzfname[8];	\/\/	pointer to input filenames (static)$/;"	v
+gzfndx	tracegz.c	/^int16_t		gzfndx;			\/\/	current file index for use by sub function error reporting$/;"	v
+gzlineno	tracegz.c	/^int64_t		gzlineno[8];	\/\/	line number of most recently read line in the file (static)$/;"	v
+h_enum	moola.h	/^	int32_t		h_enum;		\/\/	heap enumeration$/;"	m	struct:memref_rec
+halloc	utils.c	/^void halloc(memref *mr){$/;"	f
+hfree	utils.c	/^void hfree(memref *mr) {$/;"	f
+hits	moola.h	/^	int64_t		hits[5];	\/\/	number of hits for this set (G, H, S, I, O)$/;"	m	struct:cacheset_rec
+ibfr	trace_gleipnir.c	/^char		ibfr[600];		\/\/	buffer for input, 160 should be long enough for each line (function global)$/;"	v
+ibfr	trace_moola.c	/^char		ibfr[160];		\/\/	buffer for input, 160 should be long enough for each line (function global)$/;"	v
+ibfr	trace_pin.c	/^char		ibfr[160];		\/\/	buffer for input, 160 should be long enough for each line (function global)$/;"	v
+ibfr	tracegz.c	/^char		ibfr[160];		\/\/	buffer for input, 160 should be long enough for each line (function global)$/;"	v
+idle_time	moola.h	/^	int64_t		idle_time;			\/\/	time duration that cache was idle$/;"	m	struct:cache_rec
+ifil	tracegz.c	/^gzFile		*ifil[8];		\/\/	pointer to gzipped trace file for input (static)$/;"	v
+in_filcnt	moola.c	/^int16_t		in_filcnt;				\/\/	number of input files to process$/;"	v
+in_fnames	moola.c	/^char		*in_fnames[MAX_PIDS];	\/\/	pointer to input file names$/;"	v
+in_format	moola.c	/^char		*in_format;				\/\/	input file format$/;"	v
+in_lineno	trace_gleipnir.c	/^int64_t		in_lineno[8];	\/\/	line number of most recently read line in the files (static)$/;"	v
+in_lineno	trace_moola.c	/^int64_t		in_lineno[8];	\/\/	line number of most recently read line in the files (static)$/;"	v
+in_lineno	trace_pin.c	/^int64_t		in_lineno[8];	\/\/	line number of most recently read line in the files (static)$/;"	v
+init_cache	configure.c	/^int32_t	init_cache(cache *cash, cache_cfg *ccfg) {$/;"	f
+initialize	configure.c	/^int32_t	initialize() {$/;"	f
+instr_offs	moola.c	/^int64_t		instr_offs[MAX_PIDS];	\/\/	instruction address offsets used with -unicore, -unicore_sh$/;"	v
+int64_to_str	utils.c	/^char		*int64_to_str(int64_t val, char *str) {$/;"	f
+invalidate_all	reference.c	/^void		invalidate_all(cache *cash) {$/;"	f
+is_dead	reference.c	/^int8_t		is_dead(int64_t adrs, int8_t segment) {$/;"	f
+isdec	trace_gleipnir.c	/^static char isdec[256] = { 0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,  \/* 00-0f *\/$/;"	v	file:
+isdec	trace_moola.c	/^static char isdec[256] = { 0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,  \/* 00-0f *\/$/;"	v	file:
+isdec	trace_pin.c	/^static char isdec[256] = { 0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,  \/* 00-0f *\/$/;"	v	file:
+isdec	tracegz.c	/^static char isdec[256] = { 0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,  \/* 00-0f *\/$/;"	v	file:
+ishex	trace_gleipnir.c	/^static char ishex[256] = { 0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,  \/* 00-0f *\/$/;"	v	file:
+ishex	trace_moola.c	/^static char ishex[256] = { 0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,  \/* 00-0f *\/$/;"	v	file:
+ishex	trace_pin.c	/^static char ishex[256] = { 0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,  \/* 00-0f *\/$/;"	v	file:
+ishex	tracegz.c	/^static char ishex[256] = { 0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0,  \/* 00-0f *\/$/;"	v	file:
+l1_allocs	moola.h	/^	int32_t		l1_allocs;			\/\/  number of times allocated at L1$/;"	m	struct:memstat_rec
+l1_cycles	moola.h	/^	int64_t		l1_cycles;			\/\/	number of cycles in L1$/;"	m	struct:memstat_rec
+l1_dirties	moola.h	/^	int32_t		*l1_dirties;		\/\/	numbers of time with n dirty bytes at L1$/;"	m	struct:memstat_rec
+l1d	moola.c	/^cache		l1d[MAX_PIDS];			\/\/	array of Level 1 data caches (1 for each processor)$/;"	v
+l1d_cfg	moola.c	/^cache_cfg	l1d_cfg;				\/\/	configuration values for Level 1 data cache$/;"	v
+l1i	moola.c	/^cache		l1i[MAX_PIDS];			\/\/	array of Level 1 instr caches (1 for each processor)$/;"	v
+l1i_cfg	moola.c	/^cache_cfg	l1i_cfg;				\/\/	configuration values for Level 1 instruction cache$/;"	v
+l2	moola.c	/^cache		l2[MAX_PIDS];			\/\/	array of Level 2 caches (1 for each processor if private)$/;"	v
+l2_allocs	moola.h	/^	int32_t		l2_allocs;			\/\/  number of times allocated at L2$/;"	m	struct:memstat_rec
+l2_cfg	moola.c	/^cache_cfg	l2_cfg;					\/\/	configuration values for Level 2 unified cache$/;"	v
+l2_cycles	moola.h	/^	int64_t		l2_cycles;			\/\/	number of cycles in L2$/;"	m	struct:memstat_rec
+l2_dirties	moola.h	/^	int32_t		*l2_dirties;		\/\/	numbers of time with n dirty bytes at L2$/;"	m	struct:memstat_rec
+l3	moola.c	/^cache		l3;						\/\/	Level 3 cache$/;"	v
+l3_allocs	moola.h	/^	int32_t		l3_allocs;			\/\/  number of times allocated at L3$/;"	m	struct:memstat_rec
+l3_cfg	moola.c	/^cache_cfg	l3_cfg;					\/\/	configuration values for Level 3 unified cache$/;"	v
+l3_cycles	moola.h	/^	int64_t		l3_cycles;			\/\/	number of cycles in L3$/;"	m	struct:memstat_rec
+l3_dirties	moola.h	/^	int32_t		*l3_dirties;		\/\/	numbers of time with n dirty bytes at L3$/;"	m	struct:memstat_rec
+l4	moola.c	/^cache		l4;						\/\/	Level 4 cache$/;"	v
+l4_cfg	moola.c	/^cache_cfg	l4_cfg;					\/\/	configuration values for Level 4 unified cache$/;"	v
+l5	moola.c	/^cache		l5;						\/\/	Level 5 cache$/;"	v
+l5_cfg	moola.c	/^cache_cfg	l5_cfg;					\/\/	configuration values for Level 5 unified cache$/;"	v
+last_busy	moola.h	/^	int16_t		last_busy;			\/\/	last busy time point for computing idle time$/;"	m	struct:cache_rec
+level	moola.h	/^	int8_t		level;				\/\/	level of this cache; 1 is closest to processor$/;"	m	struct:cache_rec
+lin_siz	moola.h	/^	int16_t		lin_siz;	\/\/	number of bytes per cache line$/;"	m	struct:cache_cfg_rec
+linenmbr	moola.h	/^	int64_t		linenmbr;	\/\/	source file line number that initiated this memref (used for debugging)$/;"	m	struct:memref_rec
+log2blksize	moola.h	/^	int8_t		log2blksize;		\/\/	log 2 of block size in bytes (shift distance for set mask to ndx)$/;"	m	struct:cache_rec
+log2sbsize	moola.h	/^	int8_t		log2sbsize;			\/\/	log 2 of sub-block size in bytes$/;"	m	struct:cache_rec
+log2size	moola.h	/^	int8_t		log2size;			\/\/	log 2 of cache size in bytes$/;"	m	struct:cache_rec
+lower	moola.h	/^	cache		*lower;				\/\/	lower level cache (towards memory) from this cache (NULL => memory)$/;"	m	struct:cache_rec
+lru	moola.h	/^	cacheline	*lru;		\/\/	least recently used cache line$/;"	m	struct:cacheset_rec
+lru	moola.h	/^	cacheline	*lru;		\/\/	less recently used cacheline (for replacement algorithm)$/;"	m	struct:cline_rec
+main	moola.c	/^int main(int argc, char * argv[]) {$/;"	f
+main	threads.c	/^int main(void)$/;"	f
+mapit	trace_pin.c	/^int32_t		mapit;			\/\/	from input file, 0 - do not add offset, 1 - add offset to address$/;"	v
+max_mr_queue_size	moola.c	/^int32_t		max_mr_queue_size;		\/\/	maximum mr_queue size before stopping input loop$/;"	v
+mem	moola.c	/^cache		mem;					\/\/	memory "cache" for collecting statistics only$/;"	v
+mem_cfg	moola.c	/^cache_cfg	mem_cfg;				\/\/	configuration values for memory pseudo cache$/;"	v
+memref	moola.h	/^typedef struct memref_rec memref;$/;"	t	typeref:struct:memref_rec
+memref_rec	moola.h	/^struct memref_rec {$/;"	s
+memstat	moola.h	/^typedef struct memstat_rec	memstat;$/;"	t	typeref:struct:memstat_rec
+memstat_rec	moola.h	/^struct memstat_rec {$/;"	s
+memtracefil	moola.c	/^FILE		*memtracefil;			\/\/	file for optional memory trace output$/;"	v
+miss	moola.h	/^	int64_t		miss[XALLOC];		\/\/	miss count for each access type, w\/wo prefetch$/;"	m	struct:cache_rec
+miss_tag	moola.h	/^	int64_t		miss_tag[MAX_DISTR_BLKS];	\/\/	tag of cache line being filled from earlier miss$/;"	m	struct:cache_rec
+miss_time	moola.h	/^	int64_t		miss_time[MAX_DISTR_BLKS];	\/\/	cache miss processing until indicated time (= acss if no miss)$/;"	m	struct:cache_rec
+misses	moola.h	/^	int64_t		misses[5];	\/\/	number of misses for this set (G, H, S, I, O)$/;"	m	struct:cacheset_rec
+moola_moola_h	moola.h	35;"	d
+move2_lru	reference.c	/^void		move2_lru(cacheset *set, cacheline *cl) {$/;"	f
+move2_mru	reference.c	/^void		move2_mru(cacheset *set, cacheline *cl) {$/;"	f
+mr_queue	moola.h	/^} mr_queue;$/;"	t	typeref:struct:queue_rec
+mropers	moola.c	/^char		*mropers[13] = {"read", "write", "modify", "instr", "pfread", "err05", "err06", "pfinstr",$/;"	v
+mru	moola.h	/^	cacheline	*mru;		\/\/	more recently used cacheline (for replacement algorithm)$/;"	m	struct:cline_rec
+mru	moola.h	/^	cacheline	*mru;		\/\/	most recently used cache line$/;"	m	struct:cacheset_rec
+multiexpand	moola.c	/^int16_t		multiexpand;			\/\/	set to read multiple files and expand each to multiple procs$/;"	v
+mythread	threads.c	/^void *mythread(void* arg)$/;"	f
+name	moola.h	/^	char		name[8];			\/\/  text name of this cache$/;"	m	struct:cache_rec
+newest	moola.h	/^	memref		*newest;	\/\/	points to newest entry, add to queue here, NULL => empty$/;"	m	struct:queue_rec
+next	moola.h	/^	memref		*next;		\/\/	pointer to next memref in queue or idle list$/;"	m	struct:memref_rec
+next	moola.h	/^	memstat		*next;				\/\/	points to next memstat with current hash$/;"	m	struct:memstat_rec
+nmbr_cores	moola.c	/^int16_t		nmbr_cores;				\/\/	number of cores used in this run$/;"	v
+nmbr_lines	moola.h	/^	int32_t		nmbr_lines;			\/\/	number of lines in the cache (derived from other parms)$/;"	m	struct:cache_rec
+nmbr_sets	moola.h	/^	int32_t		nmbr_sets;			\/\/	number of sets in the cache (derived from other parms)$/;"	m	struct:cache_rec
+nvalid	moola.h	/^	int64_t		nvalid[5];	\/\/	number of invalidates for this set (G, H, S, I, O)$/;"	m	struct:cacheset_rec
+nxt_str	configure.c	/^char		*nxt_str;		\/\/	start of next local argument string$/;"	v
+oldest	moola.h	/^	memref		*oldest;	\/\/	points to oldest entry, take from queue here, NULL => empty$/;"	m	struct:queue_rec
+open_trace_gz	tracegz.c	/^int32_t open_trace_gz(int16_t fndx, char * fname) {$/;"	f
+oper	moola.h	/^	int8_t		oper;		\/\/  operation, see definitions for memref$/;"	m	struct:cline_rec
+oper	moola.h	/^	int8_t		oper;		\/\/  operation, see definitions just below$/;"	m	struct:memref_rec
+orig	moola.h	/^	uint8_t		*orig;		\/\/  blocksize bytes of original data$/;"	m	struct:cline_rec
+output_sets	moola.c	/^int16_t		output_sets;			\/\/	causes set statistics to be output when set to 1$/;"	v
+owner	moola.h	/^	cache		*owner;		\/\/	point to cache that owns this line$/;"	m	struct:cline_rec
+owner	moola.h	/^	cache		*owner;		\/\/	point to cache that owns this set$/;"	m	struct:cacheset_rec
+pid	moola.h	/^	int8_t		pid;		\/\/	processor ID initiating this request$/;"	m	struct:memref_rec
+pref_pol	moola.h	/^	char		pref_pol;	\/\/	prefetch policy (n -off, a - always, m - miss, ...)$/;"	m	struct:cache_cfg_rec
+prefetch	moola.h	/^	int8_t		prefetch;			\/\/	set to 1 to enable prefetching of next line$/;"	m	struct:cache_rec
+prev	moola.h	/^	memref		*prev;		\/\/	pointer to previous memref in queue$/;"	m	struct:memref_rec
+print_cache	utils.c	/^void		print_cache(cache *cash) {$/;"	f
+print_cntrs	reference.c	/^void	print_cntrs(char *msg, cache *cash, int sgmnt) {$/;"	f
+print_mr	utils.c	/^void	print_mr(memref *mr) {$/;"	f
+print_set	utils.c	/^void		print_set(cacheset *set) {$/;"	f
+print_set_stats	utils.c	/^void print_set_stats(cache *cash) {$/;"	f
+process_moola_data	trace_moola.c	/^char *process_moola_data(memref *mr) {$/;"	f
+process_moola_nodata	trace_moola.c	/^char *process_moola_nodata(memref *mr) {$/;"	f
+process_nodata	trace_gleipnir.c	/^char *process_nodata(memref *mr) {$/;"	f
+process_pin_nodata	trace_pin.c	/^char *process_pin_nodata(memref *mr) {$/;"	f
+put_bit	utils.c	/^void put_bit(int8_t val, int8_t *aray, int16_t bit) {$/;"	f
+queue_add	utils.c	/^void	queue_add(int16_t pid, memref *mr) {$/;"	f
+queue_rec	moola.h	/^typedef struct queue_rec {$/;"	s
+queue_take	utils.c	/^memref	*queue_take(int16_t pid) {$/;"	f
+queues	moola.c	/^mr_queue	queues[MAX_PIDS];		\/\/	input queue for each processor$/;"	v
+read_cfgfile	configure.c	/^int16_t read_cfgfile(FILE *fptr, int16_t tkn, char *fnam) {$/;"	f
+ref_split	reference.c	/^memref *ref_split(cache *cash, memref *mr) {$/;"	f
+reference	reference.c	/^int64_t		reference(cache *cash, memref *mr, cacheline *cl) {$/;"	f
+referncd	moola.h	/^	int16_t		referncd;	\/\/	referenced bits for up to 16 subblocks$/;"	m	struct:cline_rec
+reopen_trace_gz	tracegz.c	/^int32_t reopen_trace_gz(int16_t fndx, char * fname) {$/;"	f
+replace	moola.h	/^	char		replace;	\/\/	replacement strategy (L - LRU, R - random)$/;"	m	struct:cache_cfg_rec
+run_name	moola.c	/^char		*run_name;				\/\/	name applied to this moola run$/;"	v
+sb_siz	moola.h	/^	int16_t		sb_siz;		\/\/	number of sub-blocks in a cache line$/;"	m	struct:cache_cfg_rec
+scope	moola.h	/^	char		scope[3];	\/\/	scope info$/;"	m	struct:memref_rec
+search	reference.c	/^cacheline  *search(cache *cash, int64_t tagadrs, int32_t set_nmbr) {$/;"	f
+seg_code	moola.c	/^char		*seg_code = "GHISO";	\/\/	character codes for memory segment$/;"	v
+segment	moola.h	/^	int8_t		segment;	\/\/	memory segment 0-4: global, heap, instruction, stack, other$/;"	m	struct:cline_rec
+segmnt	moola.h	/^	int8_t		segmnt;		\/\/	memory segment 0-4: global, heap, instruction, stack, other$/;"	m	struct:memref_rec
+set_bit	utils.c	/^void set_bit(int8_t *aray, int16_t bit) {$/;"	f
+setmask	moola.h	/^	int32_t		setmask;			\/\/	mask to get set select address bits from access address$/;"	m	struct:cache_rec
+sets	moola.h	/^	cacheset	*sets;				\/\/	pointer to the cache sets data$/;"	m	struct:cache_rec
+shared	moola.h	/^	char		shared;		\/\/	indicates if cache is private (P) or shared (S)$/;"	m	struct:cache_cfg_rec
+shared	moola.h	/^	int16_t		shared;		\/\/	shared bits for up to 16 subblocks$/;"	m	struct:cline_rec
+sim_pid	moola.c	/^pid_t		sim_pid;				\/\/	process id of the current Moola simulation run$/;"	v
+sim_time	moola.c	/^int64_t		sim_time;				\/\/	simulated time$/;"	v
+size	moola.h	/^	int32_t		size;		\/\/	number of bytes in the cache, 0=> not used$/;"	m	struct:cache_cfg_rec
+size	moola.h	/^	int32_t		size;		\/\/	size of transaction; allows up to 4 GByte heap request, 0 => full cache flag$/;"	m	struct:memref_rec
+snapshot	moola.c	/^int64_t		snapshot;				\/\/	take snapshot every snapshots instructions, 0 off$/;"	v
+split	moola.h	/^	int8_t		split;		\/\/	set to 1 when second half of split transaction$/;"	m	struct:memref_rec
+split_blk	moola.h	/^	int64_t		split_blk;			\/\/	number of split line accessses$/;"	m	struct:cache_rec
+stacklimit	moola.c	/^int64_t		stacklimit[MAX_PIDS];	\/\/	limit of the stack growth for each processor$/;"	v
+stacktop	moola.c	/^int64_t		stacktop[MAX_PIDS];		\/\/	current top of stack for each processor$/;"	v
+stat	moola.h	/^	uint8_t		*stat;		\/\/	blocksize entries of data byte status$/;"	m	struct:cline_rec
+stklmt_cnt	moola.c	/^int64_t		stklmt_cnt[MAX_PIDS];	\/\/	counts number of stack limit actions for each processor$/;"	v
+stktop_cnt	moola.c	/^int64_t		stktop_cnt[MAX_PIDS];	\/\/	counts number of stack actions for each processor$/;"	v
+strict_order	moola.c	/^int16_t		strict_order;			\/\/	set to 1 if strict ordering is requested$/;"	v
+strings	configure.c	/^char		strings[4000];	\/\/	should be enough space for all option\/value strings;$/;"	v
+tagmask	moola.h	/^	int64_t		tagmask;			\/\/	mask to get tag address bits from access address (-1 << log2blksize)$/;"	m	struct:cache_rec
+time	moola.h	/^	int64_t		time;		\/\/	time of last access to this line$/;"	m	struct:cline_rec
+time	moola.h	/^	int64_t		time;		\/\/	tracks time of this transfer (see explanation below)$/;"	m	struct:memref_rec
+tkn_cnt	configure.c	/^int16_t		tkn_cnt;		\/\/	count of tokens in tokens$/;"	v
+tokens	configure.c	/^char		*tokens[500];	\/\/	pointers for up to 500 tokens (250 option\/value pairs)$/;"	v
+trace_close	moola.c	/^void		(*trace_close)(int16_t);$/;"	v
+trace_close_gleipnir_gz	trace_gleipnir.c	/^void trace_close_gleipnir_gz(int16_t fndx) {$/;"	f
+trace_close_gleipnir_txt	trace_gleipnir.c	/^void trace_close_gleipnir_txt(int16_t fndx) {$/;"	f
+trace_close_moola_gz	trace_moola.c	/^void trace_close_moola_gz(int16_t fndx) {$/;"	f
+trace_close_moola_txt	trace_moola.c	/^void trace_close_moola_txt(int16_t fndx) {$/;"	f
+trace_close_pin_gz	trace_pin.c	/^void trace_close_pin_gz(int16_t fndx) {$/;"	f
+trace_close_pin_txt	trace_pin.c	/^void trace_close_pin_txt(int16_t fndx) {$/;"	f
+trace_open	moola.c	/^int32_t		(*trace_open)(int16_t);$/;"	v
+trace_open_gleipnir_gz	trace_gleipnir.c	/^int32_t trace_open_gleipnir_gz(int16_t fndx) {$/;"	f
+trace_open_gleipnir_txt	trace_gleipnir.c	/^int32_t trace_open_gleipnir_txt(int16_t fndx) {$/;"	f
+trace_open_moola_gz	trace_moola.c	/^int32_t trace_open_moola_gz(int16_t fndx) {$/;"	f
+trace_open_moola_txt	trace_moola.c	/^int32_t trace_open_moola_txt(int16_t fndx) {$/;"	f
+trace_open_pin_gz	trace_pin.c	/^int32_t trace_open_pin_gz(int16_t fndx) {$/;"	f
+trace_open_pin_txt	trace_pin.c	/^int32_t trace_open_pin_txt(int16_t fndx) {$/;"	f
+trace_read	moola.c	/^int32_t		(*trace_read)(int16_t, memref *);$/;"	v
+trace_read_gleipnir_gz	trace_gleipnir.c	/^int32_t trace_read_gleipnir_gz(int16_t fndx, memref *mr) {$/;"	f
+trace_read_gleipnir_txt	trace_gleipnir.c	/^int32_t trace_read_gleipnir_txt(int16_t fndx, memref *mr) {$/;"	f
+trace_read_moola_gz	trace_moola.c	/^int32_t trace_read_moola_gz(int16_t fndx, memref *mr) {$/;"	f
+trace_read_moola_txt	trace_moola.c	/^int32_t trace_read_moola_txt(int16_t fndx, memref *mr) {$/;"	f
+trace_read_moola_valgz	trace_moola.c	/^int32_t trace_read_moola_valgz(int16_t fndx, memref *mr) {$/;"	f
+trace_read_moola_valtxt	trace_moola.c	/^int32_t trace_read_moola_valtxt(int16_t fndx, memref *mr) {$/;"	f
+trace_read_pin_gz	trace_pin.c	/^int32_t trace_read_pin_gz(int16_t fndx, memref *mr) {$/;"	f
+trace_read_pin_txt	trace_pin.c	/^int32_t trace_read_pin_txt(int16_t fndx, memref *mr) {$/;"	f
+trace_reopen	moola.c	/^int32_t		(*trace_reopen)(int16_t);$/;"	v
+trace_reopen_gleipnir_gz	trace_gleipnir.c	/^int32_t trace_reopen_gleipnir_gz(int16_t fndx) {$/;"	f
+trace_reopen_gleipnir_txt	trace_gleipnir.c	/^int32_t trace_reopen_gleipnir_txt(int16_t fndx) {$/;"	f
+trace_reopen_moola_gz	trace_moola.c	/^int32_t trace_reopen_moola_gz(int16_t fndx) {$/;"	f
+trace_reopen_moola_txt	trace_moola.c	/^int32_t trace_reopen_moola_txt(int16_t fndx) {$/;"	f
+trace_reopen_pin_gz	trace_pin.c	/^int32_t trace_reopen_pin_gz(int16_t fndx) {$/;"	f
+trace_reopen_pin_txt	trace_pin.c	/^int32_t trace_reopen_pin_txt(int16_t fndx) {$/;"	f
+tracegz	tracegz.c	/^int32_t tracegz(int16_t fndx, memref *mr) {$/;"	f
+txtfil	trace_gleipnir.c	/^FILE		*txtfil[8];		\/\/	pointers to text trace files for input (static)$/;"	v
+txtfil	trace_moola.c	/^FILE		*txtfil[8];		\/\/	pointers to text trace files for input (static)$/;"	v
+txtfil	trace_pin.c	/^FILE		*txtfil[8];		\/\/	pointers to text trace files for input (static)$/;"	v
+unidlys	moola.c	/^int32_t		unidlys[MAX_PIDS];		\/\/	-unicore replication delay between processor start times$/;"	v
+unimap	moola.c	/^int16_t		*unimap[MAX_PIDS][MAX_PIDS];	\/\/	-unicore file to processors map$/;"	v
+unirepeats	moola.c	/^int16_t		unirepeats[MAX_PIDS];	\/\/	-unicore files repeat counts$/;"	v
+update_cl	reference.c	/^void		update_cl(memref *mr, cacheline *cl, cacheline *dst) {$/;"	f
+val	trace_gleipnir.c	/^int64_t		val;			\/\/	temporary generation of an input value (function global)$/;"	v
+val	trace_moola.c	/^int64_t		val;			\/\/	temporary generation of an input value (function global)$/;"	v
+val	trace_pin.c	/^int64_t		val;			\/\/	temporary generation of an input value (function global)$/;"	v
+val	tracegz.c	/^int64_t		val;			\/\/	temporary generation of an input value (function global)$/;"	v
+valid	moola.h	/^	int16_t		valid;		\/\/	valid bits for up to 16 subblocks$/;"	m	struct:cline_rec
+version	moola.c	/^char		*version = "Moola beta 1.0.0, May 5, 2013";		\/\/	version string$/;"	v
+virt_adrs	moola.h	/^	int64_t		virt_adrs;	\/\/	virtual address$/;"	m	struct:memref_rec
+vname	moola.h	/^	char		vname[128];	\/\/	variable name$/;"	m	struct:memref_rec
+wait_time	moola.h	/^	int64_t		wait_time;			\/\/	time duration that accesses had to wait due to cache busy$/;"	m	struct:cache_rec
+walloc_pol	moola.h	/^	char		walloc_pol;	\/\/	write allocate policy (A - alloc, X - off)$/;"	m	struct:cache_cfg_rec
+wrback	moola.h	/^	int64_t		wrback[5];	\/\/	number of writebacks for this set (G, H, S, I, O)$/;"	m	struct:cacheset_rec
+write_pol	moola.h	/^	char		write_pol;	\/\/	write policy (B - write-back, T - write-through)$/;"	m	struct:cache_cfg_rec
+write_sets	moola.h	/^	char		write_sets;	\/\/	output sets statistics for the cache when 'T'$/;"	m	struct:cache_cfg_rec

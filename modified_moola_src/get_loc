@@ -1,0 +1,2 @@
+#
+wc configure.c moola.c reference.c tracegz.c utils.c moola.h
