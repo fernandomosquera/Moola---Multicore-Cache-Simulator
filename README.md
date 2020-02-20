@@ -10,6 +10,6 @@ Charles Shelor and Krishna Kavi. ["Moola: Multicore Cache Simulator"](https://cs
 
 You have two moola version
 
-1) The original moola is in the moola_src folder. For compile it, you hace to run Makefile
+1) The original moola is in the **moola_src** folder. For compile it, you hace to run Makefile
 
-2) The modified version of moola is in the modified_moola_src. This version add the information leakage and new mappinmg set schemes. To complie run Makefile
+2) The modified version of moola is in the **modified_moola_src** folder. This version add the information leakage and new mappinmg set schemes. To complie run Makefile
