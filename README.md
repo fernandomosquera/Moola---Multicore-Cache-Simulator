@@ -6,6 +6,8 @@ Moola is a multicore cache simulator that is similar to Dinero but permits trace
 
 Charles Shelor and Krishna Kavi. ["Moola: Multicore Cache Simulator"](https://csrl.cse.unt.edu/kavi/Research/CATA-2015.pdf), 30th International Conference on Computers and Their Applications (CATA-2015), March 9-11, 2015, Honolulu, Hawaii.
 
+Mosquera, Fernando, et al. ["CHASM: Security Evaluation of Cache Mapping Schemes."]. International Conference on Embedded Computer Systems. Springer, Cham, 2020.
+
 # How to compile
 
 You have two moola version
