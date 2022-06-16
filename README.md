@@ -16,7 +16,7 @@ You have two moola version
 
 2) The modified version of moola is inside the **modified_moola_src** folder. This version add the information leakage and new mapping set schemes. To compile it, run Makefile
 
-# List of Schemes in modified moola
+# List of Schemes in modified Moola
 
 This is the final list of schemes for moola mod
 
@@ -38,3 +38,5 @@ This is the final list of schemes for moola mod
 7 --> DES (Similar to CAESAR).
 
 8 --> CAESAR.
+
+9 --> Permute TAG & XOR.
