@@ -15,3 +15,17 @@ You have two moola version
 1) The original moola is inside the **moola_src** folder. To compile it, you have to run Makefile
 
 2) The modified version of moola is inside the **modified_moola_src** folder. This version add the information leakage and new mapping set schemes. To compile it, run Makefile
+
+# List of Schemes in modified moola
+
+This is the final list of schemes for moola mod
+
+0 --> Standard Module
+1 --> Rotate by 3
+2 --> XOR
+3 --> Rotate right by 1 and XOR
+4 --> Square TAG
+5 --> Odd multiplier by 7
+6 --> Intel slide Cache
+7 --> DES (Similar to CAESAR)
+8 --> CAESAR
