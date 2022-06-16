@@ -21,11 +21,20 @@ You have two moola version
 This is the final list of schemes for moola mod
 
 0 --> Standard Module.
+
 1 --> Rotate by 3.
+
 2 --> XOR.
+
 3 --> Rotate right by 1 and XOR.
+
 4 --> Square TAG.
+
 5 --> Odd multiplier by 7.
+
+
 6 --> Intel slide Cache.
+
 7 --> DES (Similar to CAESAR).
+
 8 --> CAESAR.
